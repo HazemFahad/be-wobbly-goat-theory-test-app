@@ -1,0 +1,431 @@
+{
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api"
+  },
+
+
+
+  "GET /api/categories": {
+    "description": "serves an array of all categories",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "category_id": 1,
+        "category_name": "Alertness"
+      },
+      {
+        "category_id": 2,
+        "category_name": "Attitude"
+      },
+      {
+        ".....": "....."
+      }
+    ]
+  },
+
+
+
+  "GET /api/questions": {
+    "description": "serves an array of all questions",
+    "queries": [],
+    "exampleResponse": {
+      "data": [
+        {
+          "question_id": 1,
+          "category_id": 1,
+          "media": "",
+          "question": "What should you do before making a U-turn?",
+          "explanation": "If you have to make a U-turn, slow down and ensure that the road is clear in both directions. Make sure that the road is wide enough for you to carry out the manoeuvre safely. Use your mirrors and look round to check it's safe before turning across the road.",
+          "correct_answer": 2
+        }
+      ]
+    }
+  },
+
+
+
+  "GET /api/question/:question_id": {
+    "description": "serves an object of the question and its answers",
+    "queries": [],
+    "exampleResponse": {
+      "question_id": 2,
+      "category_id": 1,
+      "media": "AB2003n1.gif",
+      "question": "What should you do as you approach this bridge?",
+      "explanation": "You should slow down and be cautious. Hump bridges are often narrow and there may not be enough room for you to pass an oncoming vehicle at this point. Also, there's no footpath, so be aware of pedestrians in the road.",
+      "correct_answer": 1,
+      "category_name": "Alertness",
+      "answers": [
+        {
+          "answer_id": 5,
+          "question_id": 2,
+          "answer": "Move to the right",
+          "answer_media": "",
+          "answer_number": 0
+        },
+        {
+          "answer_id": 6,
+          "question_id": 2,
+          "answer": "Slow down",
+          "answer_media": "",
+          "answer_number": 1
+        },
+        {
+          "answer_id": 7,
+          "question_id": 2,
+          "answer": "Change gear",
+          "answer_media": "",
+          "answer_number": 2
+        },
+        {
+          "answer_id": 8,
+          "question_id": 2,
+          "answer": "Keep to 30 mph",
+          "answer_media": "",
+          "answer_number": 3
+        }
+      ]
+    }
+  },
+
+
+
+  "GET /api/answers": {
+    "description": "serves an array of all answers",
+    "queries": [],
+    "exampleResponse": {
+      "current_page": 1,
+      "data": [
+      {
+      "answer_id": 1,
+      "question_id": 1,
+      "answer": "Give an arm signal as well as using your indicators",
+      "answer_media": "",
+      "answer_number": 0
+      },
+      {
+        ".....": "....."
+      }
+      ],
+      "first_page_url": "http://127.0.0.1:8000/api/answers?page=1",
+      "from": 1,
+      "last_page": 197,
+      "last_page_url": "http://127.0.0.1:8000/api/answers?page=197",
+      "links": [
+      {
+      "url": null,
+      "label": "&laquo; Previous",
+      "active": false
+      },
+      {
+      "url": "http://127.0.0.1:8000/api/answers?page=1",
+      "label": "1",
+      "active": true
+      },
+      {
+      "url": null,
+      "label": "...",
+      "active": false
+      },
+      {
+      "url": "http://127.0.0.1:8000/api/answers?page=2",
+      "label": "Next &raquo;",
+      "active": false
+      }
+      ],
+      "next_page_url": "http://127.0.0.1:8000/api/answers?page=2",
+      "path": "http://127.0.0.1:8000/api/answers",
+      "per_page": 15,
+      "prev_page_url": null,
+      "to": 15,
+      "total": 2944
+      }
+  },
+
+
+  "GET /api/answer/:answer_id": {
+    "description": "serves an object of the answer by answer_id",
+    "queries": [],
+    "exampleResponse": {
+      "answer_id": 2,
+      "question_id": 1,
+      "answer": "Check road markings to see that U-turns are permitted",
+      "answer_media": "",
+      "answer_number": 1
+      }
+  },
+
+
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": [{
+      "user_id": 2,
+      "name": "Freddy Turcotte",
+      "email": "mellie.strosin@yahoo.com",
+      "email_verified_at": "",
+      "active": 1
+      },
+      {
+      "user_id": 3,
+      "name": "Allen Oberbrunner",
+      "email": "brandyn06@orn.org",
+      "email_verified_at": null,
+      "active": 1
+      }]
+  },
+
+  "GET /api/users/:user_id": {
+    "description": "serves an object of user ",
+    "queries": [],
+    "exampleResponse": {
+      "user_id": 2,
+      "name": "Freddy Turcotte",
+      "email": "mellie.strosin@yahoo.com",
+      "email_verified_at": null,
+      "active": 1
+      }
+  },
+
+  "POST /api/user/signup": {
+    "description": "serves an object of registered user",
+    "queries": [],
+    "exampleRequest": {
+      "name": "John", 
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123", 
+      "password_confirmation": "toptal123"
+    },
+    "exampleResponse": {
+      "success": true,
+      "data": {
+        "name": "John",
+        "email": "john.doe@toptal.com",
+        "user_id": 22
+      }
+    }
+  },
+
+
+  "POST /api/user/signin": {
+    "description": "serves an object of the logged in user",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123"
+    },
+    "exampleResponse": {
+      "success": true,
+      "data": true
+    }
+  },
+
+
+  "POST /api/user/password/change": {
+    "description": "serves an object of the result of changing the user's password",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123", 
+      "password_confirmation": "toptal123"
+    },
+    "exampleResponse": {
+      "success": true,
+      "data": {
+        "user_id": 23,
+        "name": "John",
+        "email": "john.doe@toptal.com",
+        "email_verified_at": null,
+        "active": 1
+      }
+    }
+  },
+
+
+  "POST /api/user/forget": {
+    "description": "serves an object of the logged in user",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com"
+    },
+    "exampleResponse": {
+      "success": true,
+      "data": true
+    }
+  },
+
+
+  "POST /api/tests": {
+    "description": "serves an array of all testsfor the user ",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123"
+    },
+    "exampleResponse": {
+      "categories": [
+        {
+          "category_id": "football",
+          "description": "Footie!"
+        }
+      ]
+    }
+  },
+
+
+  "POST /api/test/create": {
+    "description": "serves an array of a new test questions and answers ",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123", 
+      "type_id":1,
+      "categories":[1,3]
+    },
+    "exampleResponse": [
+      {
+        "test_questions_id": 1,
+        "question_id": 52,
+        "category_id": 2,
+        "category_name": "Attitude",
+        "media": "",
+        "question": "You're driving in traffic at the speed limit for the road. What should you do if the driver behind is trying to overtake?",
+        "explanation": "Keep a steady course to give the driver behind an opportunity to overtake safely. If necessary, slow down. Reacting incorrectly to another driver's impatience can lead to danger.",
+        "correct_answer": 2,
+        "answers": [
+          {
+            "answer_id": 205,
+            "question_id": 52,
+            "answer": "Move closer to the car ahead, so the driver behind has no room to overtake",
+            "answer_media": "",
+            "answer_number": 0
+          },
+          {
+            "answer_id": 206,
+            "question_id": 52,
+            "answer": "Wave the driver behind to overtake when it's safe",
+            "answer_media": "",
+            "answer_number": 1
+          },
+          {
+            "answer_id": 207,
+            "question_id": 52,
+            "answer": "Keep a steady course and allow the driver behind to overtake",
+            "answer_media": "",
+            "answer_number": 2
+          },
+          {
+            "answer_id": 208,
+            "question_id": 52,
+            "answer": "Accelerate to get away from the driver behind",
+            "answer_media": "",
+            "answer_number": 3
+          }
+        ]
+      },
+      {
+        ".....": "....."
+      }
+    
+    ]
+  },
+
+
+  "POST /api/test/get/:test_id": {
+    "description": "serves an object of a test by its id ",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123",
+      "test_id":2
+    },
+    "exampleResponse": [
+      {
+        "test_questions_id": 1,
+        "question_id": 52,
+        "category_id": 2,
+        "category_name": "Attitude",
+        "media": "",
+        "question": "You're driving in traffic at the speed limit for the road. What should you do if the driver behind is trying to overtake?",
+        "explanation": "Keep a steady course to give the driver behind an opportunity to overtake safely. If necessary, slow down. Reacting incorrectly to another driver's impatience can lead to danger.",
+        "correct_answer": 2,
+        "user_answer_number": 2,
+        "is_correct": 1,
+        "answers": [
+          {
+            "answer_id": 205,
+            "question_id": 52,
+            "answer": "Move closer to the car ahead, so the driver behind has no room to overtake",
+            "answer_media": "",
+            "answer_number": 0
+          },
+          {
+            "answer_id": 206,
+            "question_id": 52,
+            "answer": "Wave the driver behind to overtake when it's safe",
+            "answer_media": "",
+            "answer_number": 1
+          },
+          {
+            "answer_id": 207,
+            "question_id": 52,
+            "answer": "Keep a steady course and allow the driver behind to overtake",
+            "answer_media": "",
+            "answer_number": 2
+          },
+          {
+            "answer_id": 208,
+            "question_id": 52,
+            "answer": "Accelerate to get away from the driver behind",
+            "answer_media": "",
+            "answer_number": 3
+          }
+        ]
+      },
+      {
+        ".....": "....."
+      }
+    
+    ]
+  },
+
+
+
+  "POST /api/test/update/:quiz_id": {
+    "description": "update the result of a quiz",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123"
+    },
+    "exampleResponse": {
+      "categories": [
+        {
+          "category_id": "football",
+          "description": "Footie!"
+        }
+      ]
+    }
+  },
+
+
+
+  "POST /api/state": {
+    "description": "serves an object of the user statistics ",
+    "queries": [],
+    "exampleRequest": {
+      "email": "john.doe@toptal.com", 
+      "password": "toptal123"
+    },
+    "exampleResponse": {
+      "categories": [
+        {
+          "category_id": "football",
+          "description": "Footie!"
+        }
+      ]
+    }
+  }
+
+  
+}

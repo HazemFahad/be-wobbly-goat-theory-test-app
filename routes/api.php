@@ -30,6 +30,10 @@ use App\Models\Article;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//index API//
+Route::get('/',[ApiController::class, 'index']);
+//index API//
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -80,21 +84,6 @@ Route::get('/answer/{id}', function ($id) {
 //Category API//
 
 
-
-//Test API//
-Route::post('/test/create/{type_id}',[ApiController::class, 'AddTestByTypeId']);
-
-Route::get('/test/get/{test_id}',[ApiController::class, 'getTestByTestId']);
-
-Route::post('/test/update/{test_id}',[ApiController::class, 'updateTestByTestId']);
-//Test API//
-
-
-
-
-
-
-
 //Articles API//
 Route::get('articles', function() {
     // If the Content-Type and Accept headers are set to 'application/json', 
@@ -126,25 +115,52 @@ Route::delete('articles/{id}', function($id) {
 
 
 
+//Test API//
+Route::post('/tests',[ApiController::class, 'getTests']);
+Route::post('/test/create',[ApiController::class, 'createTestByTypeId']);
+
+Route::post('/test/get/{test_id}',[ApiController::class, 'getTestByTestId']);
+
+Route::post('/test/update/{quiz_id}',[ApiController::class, 'updateTestByQuizId']);
+//Test API//
+
+
+
+
+
+
 
 
 //Statistics API//
-
+Route::post('/state',[ApiController::class, 'getStateByUserId']);
 //Statistics API//
 
 
 /**/
 
 //User API//
+Route::get('/users', function() {
+    // If the Content-Type and Accept headers are set to 'application/json', 
+    // this will return a JSON structure. This will be cleaned up later.
+    return user::all();
+});
+
 Route::post('/user/signup',[ApiController::class, 'signup']);
 Route::post('/user/signin',[ApiController::class, 'signin']);
 //Route::post('/user/reset',[ApiController::class, 'reset']);
+Route::post('/user/password/change',[ApiController::class, 'changePassword']);
+
 // forget password
 Route::post('/user/forget', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'getResetToken']);
 //reset password
 Route::post('/user/password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset']);
 //user verification
 Route::get('/user/email/verify/{token}', [App\Http\Controllers\Auth\VerificationController::class, 'verify']);
+Route::get('/users/user/{user_id}', function($user_id) {
+    $user = User::find($user_id);
+    $result = ($user)?$user:['success' => false,$user];
+    return $result;
+}); 
 //User API//
 
 

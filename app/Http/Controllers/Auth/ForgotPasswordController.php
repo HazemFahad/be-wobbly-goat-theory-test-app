@@ -36,8 +36,8 @@ class ForgotPasswordController extends Controller
         $sent = $this->sendResetLinkEmail($request);
 
         return ($sent) 
-            ? response()->json(['message'=>'Success'])
-            : response()->json(['message'=>'Failed']);
+            ? response()->json(['success' => true,'message'=>'your password confirmation email has been sent successfully!'])
+            : response()->json(['success' => false,'message'=>'Failed to connect smtp server']);
 
     }
 
