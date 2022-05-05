@@ -11,7 +11,7 @@ class Test extends Model
     protected $primaryKey = 'test_id';
     protected $table = 'tbltests';
     protected $hidden = [
-        'created_at',
+        //'created_at',
         'updated_at',
     ];
 

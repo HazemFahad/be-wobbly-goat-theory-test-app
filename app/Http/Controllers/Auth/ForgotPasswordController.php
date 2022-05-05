@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 
 
 class ForgotPasswordController extends Controller
@@ -32,13 +33,25 @@ class ForgotPasswordController extends Controller
 
     public function getResetToken(Request $request)
     {
-        $this->validate($request, ['email' => 'required|email']);
-        $sent = $this->sendResetLinkEmail($request);
+		$validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()){
+                return response()->json([
+                    "success" => false,
+                    "data" => $validator->errors(),
+                ]);
+		}else{
+			if (User::where('email', $request->email)->exists()) {
+			$sent = $this->sendResetLinkEmail($request);
 
-        return ($sent) 
-            ? response()->json(['success' => true,'message'=>'your password confirmation email has been sent successfully!'])
-            : response()->json(['success' => false,'message'=>'Failed to connect smtp server']);
-
+			return ($sent) 
+				? response()->json(['success' => true,"data"=>'your password confirmation email has been sent successfully!'])
+				: response()->json(['success' => false,"data"=>'Failed to connect smtp server']);
+			}else{
+				return response()->json(['success' => false,"data"=>['email'=>['email not found']]]);
+			}
+		}
     }
 
     public function sendResetLinkEmail(Request $request)
@@ -47,7 +60,8 @@ class ForgotPasswordController extends Controller
         $response = $this->broker()->sendResetLink(
             $request->only('email')
         );
-        return $response == Password::RESET_LINK_SENT ? 1 : 0;
+		return $response?true:false ;
+        //return $response == Password::RESET_LINK_SENT ? 1 : 0;
     }
 
 

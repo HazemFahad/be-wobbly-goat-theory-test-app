@@ -132,7 +132,7 @@ Route::post('/test/update/{quiz_id}',[ApiController::class, 'updateTestByQuizId'
 
 
 //Statistics API//
-Route::post('/state',[ApiController::class, 'getStateByUserId']);
+Route::post('/stats',[ApiController::class, 'getStateByUserId']);
 //Statistics API//
 
 
@@ -170,7 +170,7 @@ Route::get('/users/user/{user_id}', function($user_id) {
 //404 API//
 Route::any('{path}', function() {
     return response()->json([
-        'success' => false,'message' => 'Route not found'
+        'success' => false,"data" => 'Route not found'
     ], 404);
 })->where('path', '.*');
 //404 API//
