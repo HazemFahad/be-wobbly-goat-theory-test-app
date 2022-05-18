@@ -13,7 +13,7 @@ use Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
-
+use Carbon\Carbon;
 
 use Illuminate\Support\Str;
 
@@ -202,13 +202,13 @@ class ApiController extends Controller
     /* User Methods */
 
     /* Test Methods */
-
     public function getTests(Request $request)
     {
         $isValidUser = $this->isValidUser($request);
 
         if ($isValidUser["success"] == true) {
-            $tests = Test::all();
+			$user_id = $isValidUser["data"]["user_id"];
+            $tests = Test::where("user_id",$user_id)->get();
             return Response::json(["data"=>$tests]);
         } else {
             return Response::json($isValidUser);
@@ -317,9 +317,14 @@ class ApiController extends Controller
         if ($isValidUser["success"] == true) {
 			$test_question = TestQuestion::where("test_questions_id",$quiz_id)->first();
 			if($test_question && is_numeric($request->user_answer_number)){
-				$is_correct = ($request->is_correct == $request->user_answer_number)?1:0;
+				$is_correct = ($test_question->correct_answer == $request->user_answer_number)?1:0;
+                if($is_correct){
+                    Test::where('test_id',$test_question->test_id)->increment('correct', 1, ['updated_at' => Carbon::now()]);
+                }else{
+                    Test::where('test_id',$test_question->test_id)->increment('incorrect', 1, ['updated_at' => Carbon::now()]);
+                }
 				$data = TestQuestion::where("test_questions_id",$quiz_id)->update(['user_answer_number'=>$request->user_answer_number,'is_correct'=>$is_correct]);
-				return Response::json(["success" => true, "data" => true]);
+				return Response::json(["success" => true, "data" => $is_correct]);
 			}else{
 				return Response::json(["success" => false, "data" => "question not found"], 404);
 			}
@@ -332,17 +337,158 @@ class ApiController extends Controller
 
 
     /* Statistics Methods */
-    public function getStateByUserId(Request $request,$test_id)
+    public function getStateByUserId(Request $request)
     {
         $isValidUser = $this->isValidUser($request);
+        $result = array();
+        $elemx = array();
+        $elemx['01'] = "Jan";
+		$elemx['02'] = "Feb";
+		$elemx['03'] = "Mar";
+		$elemx['04'] = "Apr";
+		$elemx['05'] = "May";
+		$elemx['06'] = "Jun";
+		$elemx['07'] = "Jul";
+		$elemx['08'] = "Aug";
+		$elemx['09'] = "Sep";
+		$elemx['10'] = "Oct";
+		$elemx['11'] = "Nov";
+		$elemx['12'] = "Dec";
 
         if ($isValidUser["success"] == true) {
-            return Response::json($isValidUser);
+
+            $user_id = $isValidUser["data"]["user_id"];
+
+            $tests = Test::where("user_id",$user_id)->get();//all pass & fail
+            $testsCount = $tests->count();
+            $result['all'] = $testsCount;
+
+            $practice = Test::where("type_id",1)->where("user_id",$user_id)->get();
+            $practiceCount_pass = 0;
+            $practiceCount_fail = 0;
+            foreach($practice as $key=>$value){
+				if($value['correct']>=9){
+					$practiceCount_pass++;
+				}else{
+					$practiceCount_fail++;
+				}
+			}
+            $result['practice']['pass'] = $practiceCount_pass;
+            $result['practice']['fail'] = $practiceCount_fail;
+
+            $mock = Test::where("type_id",2)->where("user_id",$user_id)->get();
+			$mockCount_pass = 0;
+            $mockCount_fail = 0;
+            foreach($mock as $key=>$value){
+				if($value['correct']>=43){
+					$mockCount_pass++;
+				}else{
+					$mockCount_fail++;
+				}
+			}
+            $result['mock']['pass'] = $mockCount_pass;
+            $result['mock']['fail'] = $mockCount_fail;
+
+
+            if($tests){
+                $labels = [];
+                $data = [];
+                for ($i = 0; $i < 6; $i++) {
+                    $labels[] = date('m', strtotime(-$i . 'month'));
+                    $fromDate = Carbon::now()->subMonth($i)->startOfMonth()->toDateString(); 
+                    $tillDate = Carbon::now()->subMonth($i)->endOfMonth()->toDateString();
+                    $testData = Test::where("user_id",$user_id)->whereBetween('created_at',[$fromDate,$tillDate])->get();
+                    $data[] = $testData->count();
+                }
+
+                $result['data']['labels']= array_reverse($labels);
+                $result['data']['datasets']['data']= array_reverse($data);
+                $result['data']['datasets']['color']= "rgba(134, 65, 244, 1)"; // optional
+                $result['data']['datasets']['strokeWidth']= 2; // optional
+                $result['data']['datasets']['legend'] =["Test Progress"];
+
+            }
+            return Response::json($result);
         } else {
             return Response::json($isValidUser);
         }
     }
     /* Statistics Methods */
+
+
+    public function getTestCenters(Request $request)
+    {
+        
+	    $timeout = 8;
+        $url = "https://www.gov.uk/find-theory-test-centre";
+
+        $validator = Validator::make($request->all(), [
+            "postcode" => "required",
+        ]);
+		$data = array();
+
+        if ($validator->fails()) {
+            return Response::json([
+                "success" => false,
+                "data" => $validator->errors(),
+            ]);
+        } else {
+            $data_string = json_encode(["postcode"=>$request->postcode]);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);            
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); //The maximum number of seconds to allow cURL functions to execute
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                    
+                'Content-Type: application/json',                                                                 
+                'Content-Length: ' . strlen($data_string))
+            ); 
+            $http_respond = curl_exec($ch);
+        
+            
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($http_respond);
+            $centersList = $dom->getElementById('options');
+            $titles = $centersList->getElementsByTagName('h3');
+            $postcodes = $this->getElementsByClass($centersList,'span','postal-code');
+            $addresses = $this->getElementsByClass($centersList,'span','street-address');
+            $localities = $this->getElementsByClass($centersList,'span','locality');
+
+            for( $i=0;$i<$titles->length;$i++ ) {
+                $data[$i]['title'] =  $titles[$i]->textContent;
+                $data[$i]['postcode'] =  $postcodes[$i]->textContent;
+                $data[$i]['street_address'] =  $addresses[$i]->textContent;
+                $data[$i]['locality'] =  $localities[$i]->textContent;
+            }
+
+            return Response::json(
+                ["success" => true, "data" => $data],
+                200
+            );
+        }
+
+
+	}
+
+
+
+    function getElementsByClass(&$parentNode, $tagName, $className) {
+        $nodes=array();
+    
+        $childNodeList = $parentNode->getElementsByTagName($tagName);
+        for ($i = 0; $i < $childNodeList->length; $i++) {
+            $temp = $childNodeList->item($i);
+            if (stripos($temp->getAttribute('class'), $className) !== false) {
+                $nodes[]=$temp;
+            }
+        }
+    
+        return $nodes;
+    }
 
 
 }

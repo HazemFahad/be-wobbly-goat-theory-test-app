@@ -135,6 +135,9 @@ Route::post('/test/update/{quiz_id}',[ApiController::class, 'updateTestByQuizId'
 Route::post('/stats',[ApiController::class, 'getStateByUserId']);
 //Statistics API//
 
+//Test Centers API//
+Route::post('/centers',[ApiController::class, 'getTestCenters']);
+//Test Centers API//
 
 /**/
 

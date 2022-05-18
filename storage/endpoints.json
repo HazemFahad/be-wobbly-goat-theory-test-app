@@ -270,6 +270,8 @@
 			"type_id": 1,
 			"user_id": 24,
 			"result": 0,
+			"correct": 0,
+			"incorrect": 0,
 			"created_at": "2022-05-01T19:11:24.000000Z"
 		},
 		{
@@ -277,6 +279,8 @@
 			"type_id": 1,
 			"user_id": 24,
 			"result": 0,
+			"correct": 0,
+			"incorrect": 0,
 			"created_at": "2022-05-01T19:25:53.000000Z"
 		},
 		{
@@ -443,14 +447,120 @@
       "password": "toptal123"
     },
     "exampleResponse": {
-      "categories": [
-        {
-          "category_id": "football",
-          "description": "Footie!"
-        }
-      ]
-    }
-  }
+	"all": 26,
+	"practice": {
+		"pass": 5,
+		"fail": 6
+	},
+	"mock": {
+		"pass": 12,
+		"fail": 3
+	},
+	"data": {
+		"labels": [
+			"05",
+			"04",
+			"03",
+			"02",
+			"01",
+			"12"
+		],
+		"datasets": {
+			"data": [
+				2,
+				7,
+				5,
+				0,
+				12,
+				6
+			],
+			"color": "rgba(134, 65, 244, 1)",
+			"strokeWidth": 2,
+			"legend": [
+				"Test Progress"
+			]
+		}
+	}
+}
+  },
 
   
+
+
+  "POST /api/centers": {
+    "description": "update the result of a quiz",
+    "queries": [],
+    "exampleRequest": {
+      "postcode": "ne100nq"
+    },
+    "exampleResponse": {
+	"success": true,
+	"data": [
+		{
+			"title": "Newcastle",
+			"postcode": " NE1 3JA",
+			"street_address": "Suite B, Fourth Floor, Tyne House, The Side",
+			"locality": "Newcastle upon Tyne"
+		},
+		{
+			"title": "Sunderland",
+			"postcode": " SR1 1XD",
+			"street_address": "Unit 1B, Echo 24 Building, West Wear Street",
+			"locality": "Sunderland"
+		},
+		{
+			"title": "Bishop Auckland",
+			"postcode": "DL14 7EH",
+			"street_address": "First Floor, Bishop Auckland Community Partnership, The Four Clocks Centre, 154a Newgate Street",
+			"locality": "Bishop Auckland"
+		},
+		{
+			"title": "Alnwick",
+			"postcode": " NE66 1UW",
+			"street_address": "Alnwick Masonic Centre, Prudhoe Street",
+			"locality": "Alnwick"
+		},
+		{
+			"title": "Middlesbrough",
+			"postcode": "TS1 4AT",
+			"street_address": "Suite 1, First Floor, The Cooperative Buildings, 251-255 Linthorpe Road",
+			"locality": "Middlesbrough"
+		},
+		{
+			"title": "Hexham",
+			"postcode": " NE46 3NB",
+			"street_address": "First Floor, Hexham Abbey, The Parrish Centre, Beaumont Street",
+			"locality": "Hexham"
+		},
+		{
+			"title": "Northallerton B",
+			"postcode": "DL6 2NQ",
+			"street_address": "First Floor, Evolution Business Centre, County Business Park, Darlington Road",
+			"locality": "Northallerton"
+		},
+		{
+			"title": "Kirkbymoorside",
+			"postcode": "YO62 6AT",
+			"street_address": "First Floor, Community Library and Information Centre, Church House, 7 High Market Place",
+			"locality": "Kirkbymoorside"
+		},
+		{
+			"title": "Berwick",
+			"postcode": "TD15 1JT",
+			"street_address": "Ground Floor, Berwick Community Trust, The William Elder Building, 56-58 Castlegate",
+			"locality": "Berwick-upon-Tweed "
+		},
+		{
+			"title": "Harrogate",
+			"postcode": " HG1 2HR",
+			"street_address": "Second Floor, Scottsdale House, Springfield Avenue",
+			"locality": "Harrogate"
+		}
+	]
+}
+  }
+
+
+
+
 }
